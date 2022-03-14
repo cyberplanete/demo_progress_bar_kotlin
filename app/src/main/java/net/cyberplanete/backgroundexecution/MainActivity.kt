@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         val btnExecute:Button = findViewById(R.id.btn_execute)
         btnExecute.setOnClickListener {
             showProgressDialog()
+            //Which scope: It will run on the lifecycle scope
             lifecycleScope.launch {
                 execute("Task executed successfully.")
             }
@@ -30,16 +31,19 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
+// Use suspend to make it works as a coroutine function
     private suspend fun execute(result:String){
         //TODO(You can code here what you wants to execute in background execution without freezing the UI
+        // Suspend fonction.. It suspend until it return the result ---
         withContext(Dispatchers.IO) {
             // This is just a for loop which is executed for 1000000 times.
             for (i in 1..1000000) {
                 Log.e("delay : ", "" + i)
             }
+            // show a toast when thread Dispatchers.IO for loop is finished
             runOnUiThread {
                 cancelProgressDialog()
+                //I must specify on which thread (ex: runOnUiThread) this toast must be runned otherwise i will get an error as it run in the background withContext(Dispatchers.IO) thread
                 Toast.makeText(
                     this@MainActivity, result,
                     Toast.LENGTH_SHORT
